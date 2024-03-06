@@ -46,7 +46,7 @@ export default function SafeStealthAccountGenerator() {
         This page demonstrates how to recover stealth safe accounts using the
         FluidKey Stealth Account Kit.
       </p>
-      <div className="flex items-center space-x-4 justify-center">
+      <div className="flex flex-row items-center space-x-4 justify-items-center justify-center">
         <Input
           label="Safe Version"
           className="mt-4 flex-1"
