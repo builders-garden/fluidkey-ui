@@ -9,7 +9,7 @@ interface TokenBalance {
   balance: number;
 }
 
-export const whitelist = ["USDC", "USDT", "DAI", "ETH", "MATIC", "XDAI"]; // Whitelisted token symbols
+export const whitelist = ["USDC", "USDT", "DAI", "ETH"]; // Whitelisted token symbols
 export const chainIds = [1, 137, 10, 8453, 42161, 100]; // Ethereum, Polygon, OP, Arbitrum, Base, Gnosis
 
 export async function getAddressTokenBalances(
@@ -34,7 +34,6 @@ export async function getAddressTokenBalances(
         });
       }
     }
-
     return tokenBalances;
   } catch (error) {
     // Handle errors appropriately
