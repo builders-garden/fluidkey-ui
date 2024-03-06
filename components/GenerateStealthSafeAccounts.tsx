@@ -6,11 +6,12 @@ import {
   fluidkeyMessage,
   generateSafeStealthAccounts,
 } from "../lib/fluidkey";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Checkbox, Input } from "@nextui-org/react";
 import { SafeVersion } from "@fluidkey/stealth-account-kit/lib/predictStealthSafeAddressTypes";
 import StealthAddressesTables from "./StealthAddressesTable";
 import { downloadAddressesAsCSV } from "../lib/csv";
+import { getAddressTokenBalances } from "../lib/lifi";
 
 export default function SafeStealthAccountGenerator() {
   const account = useAccount();
@@ -38,6 +39,24 @@ export default function SafeStealthAccountGenerator() {
   const [useDefaultAddress, setUseDefaultAddress] = useState(true);
   const [startNonce, setStartNonce] = useState(BigInt(0));
   const [endNonce, setEndNonce] = useState(BigInt(10));
+
+  useEffect(() => {
+    (async () => {
+      await fetchTokenBalances();
+    })();
+  }, [addresses, account]);
+
+  const fetchTokenBalances = async () => {
+    const balances = await Promise.all(
+      addresses.map(async (stealthAddress: StealthAddress) => {
+        return await getAddressTokenBalances(
+          stealthAddress.stealthSafeAddress,
+          account.chainId!
+        );
+      })
+    );
+    console.log(balances);
+  };
 
   return (
     <div className="flex flex-col space-y-4 text-center">

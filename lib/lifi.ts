@@ -12,17 +12,18 @@ interface TokenBalance {
 export const whitelist = ["USDC", "USDT", "DAI", "ETH", "MATIC", "XDAI"]; // Whitelisted token symbols
 export const chainIds = [1, 137, 10, 8453, 42161, 100]; // Ethereum, Polygon, OP, Arbitrum, Base, Gnosis
 
-async function getUserTokenBalances(
+export async function getAddressTokenBalances(
   address: string,
+  chainId: number
 ): Promise<TokenBalance[]> {
   try {
     const tokenBalances: TokenBalance[] = [];
 
     const tokensResponse = await lifi.getTokens();
-    const tokens: Token[] = tokensResponse.tokens;
+    const tokens = tokensResponse.tokens;
 
     for (const symbol of whitelist) {
-      const token = tokens.find(token => token.symbol === symbol);
+      const token = tokens[chainId].find((token) => token.symbol === symbol);
       if (token) {
         const balances: { chainId: number; balance: number }[] = [];
 
@@ -31,8 +32,11 @@ async function getUserTokenBalances(
             address,
             { [chainId]: [token] } // Pass token as an array to match expected format
           );
-
-          balances.push({ chainId, balance: Number(balancesResult[chainId][chainId].amount) });
+          console.log(balancesResult[chainId]);
+          balances.push({
+            chainId,
+            balance: Number(balancesResult[chainId][chainId].amount),
+          });
         }
 
         tokenBalances.push({ token: symbol, balances });
