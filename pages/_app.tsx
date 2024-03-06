@@ -10,8 +10,7 @@ import {
   mainnet,
   optimism,
   polygon,
-  sepolia,
-  zora,
+  gnosis,
 } from "wagmi/chains";
 import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 
@@ -24,8 +23,7 @@ const config = getDefaultConfig({
     optimism,
     arbitrum,
     base,
-    zora,
-    ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === "true" ? [sepolia] : []),
+    gnosis,
   ],
   ssr: true,
 });
