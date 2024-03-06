@@ -17,13 +17,19 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <ConnectButton />
-        <GenerateStealthSafeAccounts />
+        <div className="flex flex-col space-y-12 justify-between items-center">
+          <ConnectButton />
+          <GenerateStealthSafeAccounts />
+        </div>
       </main>
 
       <footer className={styles.footer}>
-        <a href="https://rainbow.me" rel="noopener noreferrer" target="_blank">
-          Made with ❤️ by your frens at 🌈
+        <a
+          href="https://builders.garden"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          Made with ❤️ by builders garden 🌳
         </a>
       </footer>
     </div>
