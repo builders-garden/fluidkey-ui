@@ -9,12 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@fluidkey/stealth-account-kit": "^0.0.30",
     "@rainbow-me/rainbowkit": "^2.0.1",
     "@tanstack/react-query": "^5.18.1",
     "next": "^14.0.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "viem": "^2.7.3",
+    "viem": "^2.7.20",
     "wagmi": "^2.5.5"
   },
   "devDependencies": {
