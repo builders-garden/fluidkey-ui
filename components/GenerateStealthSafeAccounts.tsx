@@ -39,6 +39,9 @@ export default function SafeStealthAccountGenerator() {
   const [useDefaultAddress, setUseDefaultAddress] = useState(true);
   const [startNonce, setStartNonce] = useState(BigInt(0));
   const [endNonce, setEndNonce] = useState(BigInt(10));
+  const [tokenBalances, setTokenBalances] = useState<
+    { [address: string]: { token: string; amount: number } }[]
+  >([]);
 
   useEffect(() => {
     (async () => {
@@ -55,7 +58,6 @@ export default function SafeStealthAccountGenerator() {
         );
       })
     );
-    console.log(balances);
   };
 
   return (

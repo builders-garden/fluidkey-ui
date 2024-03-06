@@ -6,7 +6,7 @@ const lifi = new LiFi({
 
 interface TokenBalance {
   token: string;
-  balances: { chainId: number; balance: number }[];
+  balance: number;
 }
 
 export const whitelist = ["USDC", "USDT", "DAI", "ETH", "MATIC", "XDAI"]; // Whitelisted token symbols
@@ -21,25 +21,17 @@ export async function getAddressTokenBalances(
 
     const tokensResponse = await lifi.getTokens();
     const tokens = tokensResponse.tokens;
-
     for (const symbol of whitelist) {
       const token = tokens[chainId].find((token) => token.symbol === symbol);
       if (token) {
-        const balances: { chainId: number; balance: number }[] = [];
-
-        for (const chainId of chainIds) {
-          const balancesResult = await lifi.getTokenBalancesForChains(
-            address,
-            { [chainId]: [token] } // Pass token as an array to match expected format
-          );
-          console.log(balancesResult[chainId]);
-          balances.push({
-            chainId,
-            balance: Number(balancesResult[chainId][chainId].amount),
-          });
-        }
-
-        tokenBalances.push({ token: symbol, balances });
+        const balancesResult = await lifi.getTokenBalancesForChains(
+          address,
+          { [chainId]: [token] } // Pass token as an array to match expected format
+        );
+        tokenBalances.push({
+          token: symbol,
+          balance: parseFloat(balancesResult[chainId][0].amount),
+        });
       }
     }
 
