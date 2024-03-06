@@ -11,7 +11,7 @@ import { Button, Checkbox, Input } from "@nextui-org/react";
 import { SafeVersion } from "@fluidkey/stealth-account-kit/lib/predictStealthSafeAddressTypes";
 import StealthAddressesTables from "./StealthAddressesTable";
 import { downloadAddressesAsCSV } from "../lib/csv";
-import { getAddressTokenBalances } from "../lib/lifi";
+import { TokenBalance, getAddressTokenBalances } from "../lib/lifi";
 
 export default function SafeStealthAccountGenerator() {
   const account = useAccount();
@@ -39,9 +39,7 @@ export default function SafeStealthAccountGenerator() {
   const [useDefaultAddress, setUseDefaultAddress] = useState(true);
   const [startNonce, setStartNonce] = useState(BigInt(0));
   const [endNonce, setEndNonce] = useState(BigInt(10));
-  const [tokenBalances, setTokenBalances] = useState<
-    { [address: string]: { token: string; amount: number } }[]
-  >([]);
+  const [tokenBalances, setTokenBalances] = useState<TokenBalance[][]>([]);
 
   useEffect(() => {
     (async () => {
@@ -58,6 +56,7 @@ export default function SafeStealthAccountGenerator() {
         );
       })
     );
+    setTokenBalances(balances);
   };
 
   return (
@@ -127,7 +126,10 @@ export default function SafeStealthAccountGenerator() {
         )}
       </div>
       {addresses && addresses?.length > 0 ? (
-        <StealthAddressesTables stealthSafeAddresses={addresses} />
+        <StealthAddressesTables
+          stealthSafeAddresses={addresses}
+          tokenBalances={tokenBalances}
+        />
       ) : null}
     </div>
   );

@@ -1,10 +1,10 @@
-import { LiFi, TokenAmount, Token } from "@lifi/sdk";
+import { LiFi, } from "@lifi/sdk";
 
 const lifi = new LiFi({
   integrator: "Builders Garden X FluidKey",
 });
 
-interface TokenBalance {
+export interface TokenBalance {
   token: string;
   balance: number;
 }
