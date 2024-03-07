@@ -185,10 +185,12 @@ export default function SafeStealthAccountGenerator() {
                 <Input
                   label="Safe Version"
                   value={safeVersion}
+                  // disabled because right now they support only 1.3.0
+                  disabled
                   onValueChange={(e) => setSafeVersion(e)}
                   isRequired
                   endContent={
-                    <Tooltip content="Version of the Safe Smart Contracts. (Default: 1.3.0)">
+                    <Tooltip content="Version of the Safe Smart Contracts. (Default and only supported version: 1.3.0)">
                       <Info className="cursor-pointer" size={16} />
                     </Tooltip>
                   }
