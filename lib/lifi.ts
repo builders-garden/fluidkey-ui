@@ -1,6 +1,6 @@
 import { LiFi } from "@lifi/sdk";
 
-const lifi = new LiFi({
+export const lifi = new LiFi({
   integrator: "Builders Garden X FluidKey",
 });
 

@@ -12,15 +12,20 @@ import {
   Accordion,
   AccordionItem,
   Button,
+  Card,
+  CardBody,
   Checkbox,
   Input,
   Textarea,
+  Tooltip,
+  useDisclosure,
 } from "@nextui-org/react";
 import Link from "next/link";
 import PinInput from "./PinInput";
 import StealthAddressesTables from "./StealthAddressesTable";
-import { CoinsIcon, DownloadCloud } from "lucide-react";
+import { CoinsIcon, DownloadCloud, Info } from "lucide-react";
 import { downloadAddressesAsCSV } from "../lib/download";
+import AddTokenModal from "./AddTokenModal";
 
 export default function SafeStealthAccountGenerator() {
   const account = useAccount();
@@ -37,7 +42,7 @@ export default function SafeStealthAccountGenerator() {
             safeVersion: safeVersion as SafeVersion,
             useDefaultAddress,
           });
-          await fetchTokenBalances(results);
+          await fetchTokenBalances(results, tokens);
           setAddresses(results);
         } catch (e) {
           console.error(e);
@@ -65,6 +70,7 @@ export default function SafeStealthAccountGenerator() {
   const [pin, setPin] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [mode, setMode] = useState<"" | "standard" | "advanced">("");
+  const { isOpen, onOpenChange } = useDisclosure();
 
   const recoverAddresses = async () => {
     setLoading(true);
@@ -81,7 +87,10 @@ export default function SafeStealthAccountGenerator() {
     }
   };
 
-  const fetchTokenBalances = async (addresses: StealthAddress[]) => {
+  const fetchTokenBalances = async (
+    addresses: StealthAddress[],
+    tokens: string[]
+  ) => {
     const balances = await Promise.all(
       addresses.map(async (stealthAddress: StealthAddress) => {
         return await getAddressTokenBalances(
@@ -92,6 +101,11 @@ export default function SafeStealthAccountGenerator() {
       })
     );
     setTokenBalances(balances);
+  };
+
+  const onAddToken = async (token: string) => {
+    await fetchTokenBalances(addresses, [...tokens, token]);
+    setTokens([...tokens, token]);
   };
 
   const reset = () => {
@@ -126,10 +140,14 @@ export default function SafeStealthAccountGenerator() {
       {mode !== "" && addresses.length === 0 && (
         <div className="flex flex-col items-center justify-center space-y-4">
           {mode === "standard" && (
-            <>
-              <p>Setup your 4-digit pin</p>
-              <PinInput onInsertedPin={(pin: string) => setPin(pin)} />
-            </>
+            <Card className="w-full">
+              <CardBody className="flex flex-col items-center justify-center space-y-4">
+                <p className="font-semibold text-center">
+                  Enter your 4-digit pin
+                </p>
+                <PinInput onInsertedPin={(pin: string) => setPin(pin)} />
+              </CardBody>
+            </Card>
           )}
           {mode === "advanced" && (
             <>
@@ -158,12 +176,22 @@ export default function SafeStealthAccountGenerator() {
                   min={0}
                   onValueChange={(val: string) => setChainId(parseInt(val))}
                   isRequired
+                  endContent={
+                    <Tooltip content="ID of the chain. (Default: 0)">
+                      <Info className="cursor-pointer" size={16} />
+                    </Tooltip>
+                  }
                 />
                 <Input
                   label="Safe Version"
                   value={safeVersion}
                   onValueChange={(e) => setSafeVersion(e)}
                   isRequired
+                  endContent={
+                    <Tooltip content="Version of the Safe Smart Contracts. (Default: 1.3.0)">
+                      <Info className="cursor-pointer" size={16} />
+                    </Tooltip>
+                  }
                 />
                 <Input
                   type="number"
@@ -171,6 +199,11 @@ export default function SafeStealthAccountGenerator() {
                   value={startNonce.toString()}
                   onValueChange={(e) => setStartNonce(BigInt(e))}
                   isRequired
+                  endContent={
+                    <Tooltip content="Starting nonce for the keys generation. (Default: 0)">
+                      <Info className="cursor-pointer" size={16} />
+                    </Tooltip>
+                  }
                 />
                 <Input
                   type="number"
@@ -178,12 +211,22 @@ export default function SafeStealthAccountGenerator() {
                   value={endNonce.toString()}
                   onValueChange={(e) => setEndNonce(BigInt(e))}
                   isRequired
+                  endContent={
+                    <Tooltip content="Ending nonce for the keys generation. (Default: 10)">
+                      <Info className="cursor-pointer" size={16} />
+                    </Tooltip>
+                  }
                 />
                 <Input
                   label="Custom RPC"
                   value={customRpc}
                   type="text"
                   onValueChange={setCustomRpc}
+                  endContent={
+                    <Tooltip content="Custom RPC to generate keys or scan balances. (Defaults to your wallet one)">
+                      <Info className="cursor-pointer" size={16} />
+                    </Tooltip>
+                  }
                 />
                 <Checkbox
                   isSelected={useDefaultAddress}
@@ -214,8 +257,13 @@ export default function SafeStealthAccountGenerator() {
       )}
       {addresses && addresses.length > 0 && (
         <>
-          <div className="flex flex-row items-center justify-between mb-4">
-            <Button color="primary" variant="flat" startContent={<CoinsIcon />}>
+          <div className="flex flex-row items-center justify-between mb-4 px-4 md:px-0">
+            <Button
+              color="primary"
+              variant="flat"
+              startContent={<CoinsIcon />}
+              onPress={() => onOpenChange()}
+            >
               Add token
             </Button>
             <div className="flex flex-row space-x-2 items-center justify-end">
@@ -240,6 +288,11 @@ export default function SafeStealthAccountGenerator() {
           />
         </>
       )}
+      <AddTokenModal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        onAddToken={onAddToken}
+      />
     </div>
   );
 }

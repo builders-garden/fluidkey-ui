@@ -36,60 +36,62 @@ export default function StealthAddressesTables({
 
   console.log(tokenBalances);
   return (
-    <Table
-      isStriped
-      bottomContent={
-        <div className="flex w-full justify-center">
-          <Pagination
-            isCompact
-            showControls
-            showShadow
-            page={page}
-            total={pages}
-            onChange={(page) => setPage(page)}
-          />
-        </div>
-      }
-      classNames={{
-        wrapper: "min-h-[420px]",
-      }}
-    >
-      <TableHeader>
-        <TableColumn>Nonce</TableColumn>
-        <TableColumn>Address</TableColumn>
-        {tokens.map((token) => (
-          <TableColumn key={token}>{token}</TableColumn>
-        ))}
-        <TableColumn>{""}</TableColumn>
-      </TableHeader>
-      <TableBody>
-        {items.map((address, index) => (
-          <TableRow key={address.nonce}>
-            <TableCell>{address.nonce.toLocaleString()}</TableCell>
-            <TableCell>{sliceHex(address.stealthSafeAddress)}</TableCell>
-            {tokens.map((token) => (
-              <TableCell key={token}>
-                {tokenBalances[index].find((t) => t.token === token)?.balance}
+    <div className="overflow-x-scroll flex flex-col items-center justify-center w-screen md:w-auto p-4 md:p-1">
+      <Table
+        isStriped
+        bottomContent={
+          <div className="flex w-full justify-center">
+            <Pagination
+              isCompact
+              showControls
+              showShadow
+              page={page}
+              total={pages}
+              onChange={(page) => setPage(page)}
+            />
+          </div>
+        }
+        classNames={{
+          wrapper: "min-h-[420px]",
+        }}
+      >
+        <TableHeader>
+          <TableColumn>Nonce</TableColumn>
+          <TableColumn>Address</TableColumn>
+          {tokens.map((token) => (
+            <TableColumn key={token}>{token}</TableColumn>
+          ))}
+          <TableColumn>{""}</TableColumn>
+        </TableHeader>
+        <TableBody>
+          {items.map((address, index) => (
+            <TableRow key={address.nonce}>
+              <TableCell>{address.nonce.toLocaleString()}</TableCell>
+              <TableCell>{sliceHex(address.stealthSafeAddress)}</TableCell>
+              {tokens.map((token) => (
+                <TableCell key={token}>
+                  {tokenBalances[index].find((t) => t.token === token)?.balance}
+                </TableCell>
+              ))}
+              <TableCell>
+                <Button
+                  size="sm"
+                  color="primary"
+                  isIconOnly
+                  onClick={() =>
+                    downloadEphemeralPrivateKey(
+                      address.stealthSafeAddress,
+                      address.ephemeralPrivateKey
+                    )
+                  }
+                >
+                  <Key size={12} />
+                </Button>
               </TableCell>
-            ))}
-            <TableCell>
-              <Button
-                size="sm"
-                color="primary"
-                isIconOnly
-                onClick={() =>
-                  downloadEphemeralPrivateKey(
-                    address.stealthSafeAddress,
-                    address.ephemeralPrivateKey
-                  )
-                }
-              >
-                <Key size={12} />
-              </Button>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 }

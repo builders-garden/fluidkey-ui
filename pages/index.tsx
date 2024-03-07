@@ -3,7 +3,7 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import GenerateStealthSafeAccounts from "../components/GenerateStealthSafeAccounts";
 import { useAccount } from "wagmi";
-import { Button } from "@nextui-org/react";
+import { Button, Link } from "@nextui-org/react";
 
 const Home: NextPage = () => {
   const { address, isConnected } = useAccount();
@@ -18,11 +18,11 @@ const Home: NextPage = () => {
         <link href="/favicon.ico" rel="icon" />
       </Head>
 
-      <main className="flex flex-col items-center justify-between min-h-screen py-8 h-full relative">
-        <div className="flex flex-col space-y-4 text-center pb-4">
-          {isConnected && <ConnectButton />}
+      <main className="flex flex-col items-center justify-between min-h-screen pb-8 pt-4 h-full relative w-full">
+        <div className="flex flex-col md:flex-row space-x-0 md:space-x-4 space-y-4 md:space-y-0 justify-center md:justify-evenly items-center pb-4 w-full px-4 text-center">
           <h1 className="text-2xl font-bold">Stealth Safe Accounts</h1>
-          <p>Recover your stealth safe accounts with ease.</p>
+          {isConnected && <ConnectButton />}
+          {/* <p>Recover your stealth safe accounts with ease.</p> */}
         </div>
         <div className="flex flex-col space-y-12 justify-center items-center">
           {isConnected && <GenerateStealthSafeAccounts />}
@@ -45,14 +45,11 @@ const Home: NextPage = () => {
           )}
         </div>
 
-        <footer className="py-4">
-          <a
-            href="https://builders.garden"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Made with ❤️ by builders garden 🌳
-          </a>
+        <footer className="py-4 text-sm">
+          Made with ❤️ by{" "}
+          <Link isExternal href="https://builders.garden" className="text-sm">
+            builders garden 🌳
+          </Link>
         </footer>
       </main>
     </div>
