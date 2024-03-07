@@ -34,10 +34,10 @@ export default function StealthAddressesTables({
     return stealthSafeAddresses.slice(start, end);
   }, [page, stealthSafeAddresses]);
 
-  console.log(tokenBalances);
   return (
     <div className="overflow-x-scroll flex flex-col items-center justify-center w-screen md:w-auto p-4 md:p-1">
       <Table
+        aria-label="Stealth Addresses Table"
         isStriped
         bottomContent={
           <div className="flex w-full justify-center">
