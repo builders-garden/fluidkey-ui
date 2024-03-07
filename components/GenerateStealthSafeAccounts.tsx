@@ -186,7 +186,7 @@ export default function SafeStealthAccountGenerator() {
                   label="Safe Version"
                   value={safeVersion}
                   // disabled because right now they support only 1.3.0
-                  disabled
+                  isDisabled
                   onValueChange={(e) => setSafeVersion(e)}
                   isRequired
                   endContent={
