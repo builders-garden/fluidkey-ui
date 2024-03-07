@@ -8,34 +8,85 @@ import {
   TableRow,
   TableCell,
 } from "@nextui-org/table";
+import { sliceHex } from "viem";
+import { useMemo, useState } from "react";
+import { Button, Pagination } from "@nextui-org/react";
+import { Key } from "lucide-react";
+import { downloadEphemeralPrivateKey } from "../lib/download";
 export default function StealthAddressesTables({
   stealthSafeAddresses,
   tokenBalances,
+  tokens = ["ETH", "USDC", "USDT", "DAI"],
 }: {
   stealthSafeAddresses: StealthAddress[];
   tokenBalances: TokenBalance[][];
+  tokens: string[];
 }) {
+  const [page, setPage] = useState(1);
+  const rowsPerPage = 8;
+
+  const pages = Math.ceil(stealthSafeAddresses.length / rowsPerPage);
+
+  const items = useMemo(() => {
+    const start = (page - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+
+    return stealthSafeAddresses.slice(start, end);
+  }, [page, stealthSafeAddresses]);
+
+  console.log(tokenBalances);
   return (
-    <Table isStriped>
+    <Table
+      isStriped
+      bottomContent={
+        <div className="flex w-full justify-center">
+          <Pagination
+            isCompact
+            showControls
+            showShadow
+            page={page}
+            total={pages}
+            onChange={(page) => setPage(page)}
+          />
+        </div>
+      }
+      classNames={{
+        wrapper: "min-h-[420px]",
+      }}
+    >
       <TableHeader>
         <TableColumn>Nonce</TableColumn>
         <TableColumn>Address</TableColumn>
-        <TableColumn>ETH</TableColumn>
-        <TableColumn>USDC</TableColumn>
-        <TableColumn>USDT</TableColumn>
-        <TableColumn>DAI</TableColumn>
+        {tokens.map((token) => (
+          <TableColumn key={token}>{token}</TableColumn>
+        ))}
+        <TableColumn>{""}</TableColumn>
       </TableHeader>
       <TableBody>
-        {stealthSafeAddresses.map((address, index) => (
+        {items.map((address, index) => (
           <TableRow key={address.nonce}>
             <TableCell>{address.nonce.toLocaleString()}</TableCell>
-            <TableCell>{address.stealthSafeAddress}</TableCell>
+            <TableCell>{sliceHex(address.stealthSafeAddress)}</TableCell>
+            {tokens.map((token) => (
+              <TableCell key={token}>
+                {tokenBalances[index].find((t) => t.token === token)?.balance}
+              </TableCell>
+            ))}
             <TableCell>
-              {tokenBalances[index].find((t) => t.token === "USDC")?.balance}
+              <Button
+                size="sm"
+                color="primary"
+                isIconOnly
+                onClick={() =>
+                  downloadEphemeralPrivateKey(
+                    address.stealthSafeAddress,
+                    address.ephemeralPrivateKey
+                  )
+                }
+              >
+                <Key size={12} />
+              </Button>
             </TableCell>
-            <TableCell>{tokenBalances[index].find((t) => t.token === "USDC")?.balance}</TableCell>
-            <TableCell>{tokenBalances[index].find((t) => t.token === "USDT")?.balance}</TableCell>
-            <TableCell>{tokenBalances[index].find((t) => t.token === "DAI")?.balance}</TableCell>
           </TableRow>
         ))}
       </TableBody>

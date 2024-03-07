@@ -9,22 +9,27 @@ import {
   predictStealthSafeAddressWithBytecode,
 } from "@fluidkey/stealth-account-kit";
 import { SafeVersion } from "@fluidkey/stealth-account-kit/lib/predictStealthSafeAddressTypes";
+import { http, keccak256, toHex } from "viem";
 
-export const fluidkeyMessage = (
-  nonce: number
-) => `Sign this message to generate your Fluidkey private payment keys.
+export const fluidkeyMessage = (address: `0x${string}`, secret: string) => {
+  const nonce = keccak256(toHex(address + secret)).replace("0x", "");
+
+  return `Sign this message to generate your Fluidkey private payment keys.
 
 WARNING: Only sign this message within a trusted website or platform to avoid loss of funds.
 
 Secret: ${nonce}`;
+};
 
 export interface StealthAddress {
   nonce: bigint;
   stealthSafeAddress: `0x${string}`;
+  ephemeralPrivateKey: `0x${string}`;
 }
 
 export async function generateSafeStealthAccounts({
   signature,
+  customRpc,
   viewingPrivateKeyNodeNumber = 0,
   startNonce = BigInt(0),
   endNonce = BigInt(10),
@@ -33,6 +38,7 @@ export async function generateSafeStealthAccounts({
   safeVersion = "1.3.0",
 }: {
   signature: `0x${string}`;
+  customRpc?: string;
   viewingPrivateKeyNodeNumber?: number;
   startNonce?: bigint;
   endNonce?: bigint;
@@ -41,7 +47,7 @@ export async function generateSafeStealthAccounts({
   safeVersion?: SafeVersion;
 }): Promise<StealthAddress[]> {
   // Create an empty array to store the results
-  const results: { nonce: bigint; stealthSafeAddress: `0x${string}` }[] = [];
+  const results: StealthAddress[] = [];
 
   // Generate the private keys from the signature
   const { spendingPrivateKey, viewingPrivateKey } =
@@ -80,7 +86,8 @@ export async function generateSafeStealthAccounts({
         threshold: 1,
         stealthAddresses,
         safeVersion,
-        useDefaultAddress
+        useDefaultAddress,
+        transport: customRpc ? http(customRpc) : undefined,
       });
     const { stealthSafeAddress: stealthSafeAddressWithBytecode } =
       predictStealthSafeAddressWithBytecode({
@@ -102,7 +109,11 @@ export async function generateSafeStealthAccounts({
     );
 
     // Add the result to the results array
-    results.push({ nonce, stealthSafeAddress: stealthSafeAddressWithBytecode });
+    results.push({
+      nonce,
+      stealthSafeAddress: stealthSafeAddressWithBytecode,
+      ephemeralPrivateKey,
+    });
   }
 
   // Return the results

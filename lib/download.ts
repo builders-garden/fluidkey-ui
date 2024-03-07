@@ -12,3 +12,17 @@ export const downloadAddressesAsCSV = (addresses: StealthAddress[]) => {
   document.body.appendChild(link);
   link.click();
 };
+
+export const downloadEphemeralPrivateKey = (
+  address: `0x${string}`,
+  ephemeralPrivateKey: `0x${string}`
+) => {
+  const element = document.createElement("a");
+  const file = new Blob([ephemeralPrivateKey], {
+    type: "text/plain",
+  });
+  element.href = URL.createObjectURL(file);
+  element.download = `${address}-ephemeral-private-key.txt`;
+  document.body.appendChild(element);
+  element.click();
+};
