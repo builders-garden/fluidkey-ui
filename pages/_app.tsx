@@ -11,13 +11,14 @@ import {
   optimism,
   polygon,
   gnosis,
+  sepolia,
 } from "wagmi/chains";
 import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 
 const config = getDefaultConfig({
   appName: "Fluidkey Stealth Account Recovery",
   projectId: process.env.NEXT_PUBLIC_WC_PROJECT_ID!,
-  chains: [mainnet, polygon, optimism, arbitrum, base, gnosis],
+  chains: [mainnet, polygon, optimism, arbitrum, base, gnosis, sepolia],
   ssr: true,
 });
 

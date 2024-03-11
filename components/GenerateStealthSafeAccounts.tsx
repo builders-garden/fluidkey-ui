@@ -26,14 +26,18 @@ import StealthAddressesTables from "./StealthAddressesTable";
 import { CoinsIcon, DownloadCloud, Info } from "lucide-react";
 import { downloadAddressesAsCSV } from "../lib/download";
 import AddTokenModal from "./AddTokenModal";
+import { Progress } from "@nextui-org/react";
 
 export default function SafeStealthAccountGenerator() {
   const account = useAccount();
+  const [progress, setProgress] = useState(0);
+  const [loadingText, setLoadingText] = useState("");
   const { signMessage } = useSignMessage({
     mutation: {
       async onSuccess(data) {
         try {
           setLoading(true);
+          setLoadingText("Recovering addresses...");
           const results = await generateSafeStealthAccounts({
             signature: data,
             chainId,
@@ -41,8 +45,11 @@ export default function SafeStealthAccountGenerator() {
             endNonce,
             safeVersion: safeVersion as SafeVersion,
             useDefaultAddress,
+            setProgress,
           });
+          setLoadingText("Fetching token balances...");
           await fetchTokenBalances(results, tokens);
+          setLoadingText("");
           setAddresses(results);
         } catch (e) {
           console.error(e);
@@ -249,13 +256,22 @@ export default function SafeStealthAccountGenerator() {
               isLoading={loading}
               onClick={() => recoverAddresses()}
             >
-              Recover addresses
+              {loadingText ? loadingText : "Recover addresses"}
             </Button>
             <Button variant="flat" onClick={() => setMode("")}>
               Back
             </Button>
           </div>
         </div>
+      )}
+      {loading && (
+        <Progress
+          aria-label="Loading..."
+          value={progress}
+          maxValue={parseFloat(endNonce.toLocaleString())}
+          color="primary"
+          className="w-full mt-4"
+        />
       )}
       {addresses && addresses.length > 0 && (
         <>
