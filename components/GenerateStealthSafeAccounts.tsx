@@ -49,6 +49,7 @@ export default function SafeStealthAccountGenerator() {
           });
           setLoadingText("Fetching token balances...");
           await fetchTokenBalances(results, tokens);
+          setProgress(progress + 1);
           setLoadingText("");
           setAddresses(results);
         } catch (e) {
@@ -266,9 +267,10 @@ export default function SafeStealthAccountGenerator() {
       )}
       {loading && (
         <Progress
+          showValueLabel
           aria-label="Loading..."
           value={progress}
-          maxValue={parseFloat(endNonce.toLocaleString())}
+          maxValue={parseFloat(endNonce.toLocaleString()) + 1}
           color="primary"
           className="w-full mt-4"
         />
