@@ -99,6 +99,8 @@ export default function SafeStealthAccountGenerator() {
     addresses: StealthAddress[],
     tokens: string[]
   ) => {
+    // divide addresses in chunks of 10 then fetch token balances
+    // TODO: fix the number of calls per second to avoid rate limits
     const balances = await Promise.all(
       addresses.map(async (stealthAddress: StealthAddress) => {
         return await getAddressTokenBalances(
